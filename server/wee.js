@@ -1,4 +1,4 @@
-const router = function(){
+const wee = function(){
 	var routers=[];
 	const routercb = function(req,res){
 		routers.forEach(function(target){
@@ -22,4 +22,4 @@ const router = function(){
 	}
 	return routercb;
 }
-module.exports = router;
+module.exports = wee;
