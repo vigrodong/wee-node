@@ -1,7 +1,7 @@
 const http = require('http');
 const https = require('https');
-const isRegExp = require('./isnot.js').isRegExp;
-const isString = require('./isnot.js').isString;
+const static = require('./static.js');
+const commonRouter = require('./commonRouter.js');
 const isFunction = require('./isnot.js').isFunction;
 const fs = require('fs');
 
@@ -17,76 +17,30 @@ const wee = function() {
   //路由错误的回掉函数
   var notFound = null;
 
-
-
   const app = function(req, res) {
 
-    new Promise(function(resolve, reject) {
-      if (staticdir.length != 0) {
-        processControl = 0;
-        staticdir.forEach(function(target) {
-          if (req.url.indexOf('/' + target.rename + '/') == 0) {
-            fs.access(req.url.replace('/' + target.rename, target.dir), function(err) {
-              if (err) {
-                reject();
-              } else {
-                var fsStream = fs.ReadStream(req.url.replace('/' + target.rename, target.dir));
-                fsStream.on('finish',function(){
-                  resolve();
-                })
-                fsStream.pipe(res);
+    static(staticdir, res, req).
+        then(
+            function() {
+              // resolve();
+            }, function() {
+              commonRouter(routers, req, res);
+            }).
+        then(
+            function() {
+
+            }, function() {
+              if (notFound && isFunction(notFound)) {
+                notFound();
               }
-            });
-          } else {
-            processControl++;
-          }
+              else {
+                res.write('404,not fund or have no root');
+                res.end();
+              }
+            }).
+        catch(function(err) {
+          throw err;
         });
-        if (processControl == staticdir.length) {
-          reject();
-        }
-      }
-      else {
-        reject();
-      }
-    }).then(function() {
-      resolve();
-    }, function() {
-
-      return new Promise(function(resolve, reject) {
-        if (routers.length != 0) {
-          processControl = 0;
-          routers.forEach(function(target) {
-            if (isRegExp(target.url) && target.url.test(req.url)) {
-              target.callback(req, res);
-              resolve();
-              return false;
-            } else if (isString(target.url) && req.url == target.url) {
-              target.callback(req, res);
-              resolve();
-              return false;
-            }
-            else {
-              processControl++;
-            }
-          });
-          if (processControl == routers.length) {
-            reject();
-          }
-        } else {
-          reject();
-        }
-      });
-    }).then(function() {
-
-    }, function() {
-      if (notFound && isFunction(notFound)) {
-        notFound();
-      }
-      else {
-        res.write('404,not fund or have no root');
-        res.end();
-      }
-    });
   };
 
   //添加路由功能
