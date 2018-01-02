@@ -18,18 +18,23 @@ const wee = function() {
   var notFound = null;
 
 
+
   const app = function(req, res) {
 
     new Promise(function(resolve, reject) {
       if (staticdir.length != 0) {
         processControl = 0;
         staticdir.forEach(function(target) {
-          if (req.url.indexOf('/' + target.rename)+'／' == 0 ) {
+          if (req.url.indexOf('/' + target.rename + '/') == 0) {
             fs.access(req.url.replace('/' + target.rename, target.dir), function(err) {
               if (err) {
                 reject();
               } else {
-                fs.ReadStream(req.url.replace('/' + target.rename, target.dir)).pipe(res);
+                var fsStream = fs.ReadStream(req.url.replace('/' + target.rename, target.dir));
+                fsStream.on('finish',function(){
+                  resolve();
+                })
+                fsStream.pipe(res);
               }
             });
           } else {
@@ -44,7 +49,7 @@ const wee = function() {
         reject();
       }
     }).then(function() {
-
+      resolve();
     }, function() {
 
       return new Promise(function(resolve, reject) {
@@ -72,12 +77,13 @@ const wee = function() {
         }
       });
     }).then(function() {
+
     }, function() {
       if (notFound && isFunction(notFound)) {
         notFound();
       }
       else {
-        res.write('404,not fund');
+        res.write('404,not fund or have no root');
         res.end();
       }
     });
@@ -96,6 +102,18 @@ const wee = function() {
     process.chdir(dictory);
   };
 
+  //当使用static功能后 ，次目录文件夹下的所有请求，都将是对静态文件的输入输出，不再参与任何的业务逻辑
+  app.static = function(dir, rename) {
+    staticdir.push({
+      dir: dir,
+      rename: rename ? rename : dir,
+    });
+  };
+  //静态文件不存在的处理方案
+  app.staticnot = function(cb) {
+    notFound = cb;
+  };
+
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
     var port = port ? port : 80;
@@ -112,16 +130,6 @@ const wee = function() {
     }
   };
 
-  //当使用static功能后 ，次目录文件夹下的所有请求，都将是对静态文件的输入输出，不再参与任何的业务逻辑
-  app.static = function(dir, rename) {
-    staticdir.push({
-      dir: dir,
-      rename: rename ? rename : dir,
-    });
-  };
-  app.staticnot = function(cb) {
-    notFound = cb;
-  };
   //改变当时node的运行进程，符合开发者对目录的操作习惯。
   process.chdir(__dirname);
   return app;
