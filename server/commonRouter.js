@@ -9,15 +9,15 @@ function commonRouter(routers, req, res) {
   return new Promise(function(resolve, reject) {
     if (routers.length != 0) {
       processControl = 0;
-      routers.forEach(function(target) {
+      routers.some(function(target) {
         if (isRegExp(target.url) && target.url.test(req.url)) {
           target.callback(req, res);
           resolve();
-          return false;
+          return true;
         } else if (isString(target.url) && req.url == target.url) {
           target.callback(req, res);
           resolve();
-          return false;
+          return true;
         }
         else {
           processControl++;

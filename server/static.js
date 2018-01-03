@@ -8,7 +8,7 @@ function readStatic(staticdir,res,req){
   return new Promise(function(resolve, reject) {
     if (staticdir.length != 0) {
       processControl = 0;
-      staticdir.forEach(function(target) {
+      staticdir.some(function(target) {
         if (req.url.indexOf('/' + target.rename + '/') == 0) {
           fs.access(req.url.replace('/' + target.rename, target.dir), function(err) {
             if (err) {
@@ -21,6 +21,7 @@ function readStatic(staticdir,res,req){
               fsStream.pipe(res);
             }
           });
+          return true;
         } else {
           processControl++;
         }

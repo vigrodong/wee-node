@@ -22,7 +22,7 @@ const wee = function() {
     static(staticdir, res, req).
         then(
             function() {
-              // resolve();
+
             }, function() {
               commonRouter(routers, req, res);
             }).
@@ -45,10 +45,22 @@ const wee = function() {
 
   //添加路由功能
   app.use = function(url, cb) {
-    routers.push({
-      url: url,
-      callback: cb,
-    });
+    var bool = true;
+    routers.some(function(target){
+      if(target.url == url){
+        bool =false;
+        return true;
+      }
+    })
+    if(bool){
+      routers.push({
+        url: url,
+        callback: cb,
+      });
+    }
+    else{
+      throw new Error('set the same router');
+    }
   };
 
   // 改变开发的node的运行环境
@@ -58,10 +70,21 @@ const wee = function() {
 
   //当使用static功能后 ，次目录文件夹下的所有请求，都将是对静态文件的输入输出，不再参与任何的业务逻辑
   app.static = function(dir, rename) {
-    staticdir.push({
-      dir: dir,
-      rename: rename ? rename : dir,
-    });
+    var bool = true;
+    staticdir.some(function(target){
+      if(target.rename ==  rename){
+        bool =false;
+        return true;
+      }
+    })
+    if(bool){
+      staticdir.push({
+        dir: dir,
+        rename: rename ? rename : dir,
+      });
+    }else{
+      throw new Error('add the same name routers');
+    }
   };
   //静态文件不存在的处理方案
   app.staticnot = function(cb) {
