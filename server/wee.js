@@ -23,24 +23,19 @@ const wee = function() {
     static(staticdir, res, req).
         then(
             function() {
-
-            }, function() {
-              commonRouter(routers, req, res);
             }).
-        then(
-            function() {
+        catch(function() {
+          commonRouter(routers, req, res).then(function() {
 
-            }, function() {
-              if (notFound && isFunction(notFound)) {
-                notFound();
-              }
-              else {
-                res.write('404,not fund or have no root');
-                res.end();
-              }
-            }).
-        catch(function(err) {
-          throw err;
+          }).catch(function() {
+            if (notFound && isFunction(notFound)) {
+              notFound();
+            }
+            else {
+              res.write('404,not fund or have no root');
+              res.end();
+            }
+          });
         });
   };
 
@@ -68,7 +63,7 @@ const wee = function() {
     } else {
       staticdir.push({
         dir: dir,
-        rename: rename ? rename : dir,
+        rename: rename ? rename : dir.replace(/[\.\/]/gi, ''),
       });
     }
   };
