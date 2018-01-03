@@ -3,6 +3,7 @@ const https = require('https');
 const static = require('./static.js');
 const commonRouter = require('./commonRouter.js');
 const isFunction = require('./isnot.js').isFunction;
+const has = require('./wutil.js').has;
 const fs = require('fs');
 
 const wee = function() {
@@ -45,21 +46,13 @@ const wee = function() {
 
   //添加路由功能
   app.use = function(url, cb) {
-    var bool = true;
-    routers.some(function(target){
-      if(target.url == url){
-        bool =false;
-        return true;
-      }
-    })
-    if(bool){
+    if (has(routers, 'url', url)) {
+      throw new Error('set the same router');
+    } else {
       routers.push({
         url: url,
         callback: cb,
       });
-    }
-    else{
-      throw new Error('set the same router');
     }
   };
 
@@ -70,20 +63,13 @@ const wee = function() {
 
   //当使用static功能后 ，次目录文件夹下的所有请求，都将是对静态文件的输入输出，不再参与任何的业务逻辑
   app.static = function(dir, rename) {
-    var bool = true;
-    staticdir.some(function(target){
-      if(target.rename ==  rename){
-        bool =false;
-        return true;
-      }
-    })
-    if(bool){
+    if (has(staticdir, 'rename', rename)) {
+      throw new Error('add the same name routers');
+    } else {
       staticdir.push({
         dir: dir,
         rename: rename ? rename : dir,
       });
-    }else{
-      throw new Error('add the same name routers');
     }
   };
   //静态文件不存在的处理方案
