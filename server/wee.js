@@ -20,7 +20,7 @@ const wee = function() {
 
   const app = function(req, res) {
 
-    static(staticdir, res, req).
+    static(staticdir, req, res).
         then(
             function() {
             }).

@@ -4,7 +4,7 @@
 const fs =require('fs');
 
 var  processControl = 0;
-function readStatic(staticdir,res,req){
+function readStatic(staticdir,req,res){
   return new Promise(function(resolve, reject) {
     if (staticdir.length != 0) {
       processControl = 0;
