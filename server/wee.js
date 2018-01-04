@@ -18,6 +18,9 @@ const wee = function() {
   //路由错误的回掉函数
   var notFound = null;
 
+  var lifecycle =[];
+
+
   const app = function(req, res) {
 
     static(staticdir, req, res).
@@ -72,6 +75,8 @@ const wee = function() {
     notFound = cb;
   };
 
+
+
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
     var port = port ? port : 80;
@@ -88,8 +93,6 @@ const wee = function() {
     }
   };
 
-  //改变当时node的运行进程，符合开发者对目录的操作习惯。
-  process.chdir(__dirname);
   return app;
 };
 module.exports = wee;
