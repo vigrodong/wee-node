@@ -3,6 +3,9 @@ const https = require('https');
 const static = require('./static.js');
 const commonRouter = require('./commonRouter.js');
 const isFunction = require('./isnot.js').isFunction;
+const isArray = require('./isnot.js').isArray;
+const isString = require('./isnot.js').isString;
+const isRegExp = require('./isnot.js').isRegExp;
 const has = require('./wutil.js').has;
 const fs = require('fs');
 
@@ -18,8 +21,7 @@ const wee = function() {
   //路由错误的回掉函数
   var notFound = null;
 
-  var lifecycle =[];
-
+  var lifecycle = [];
 
   const app = function(req, res) {
 
@@ -43,14 +45,30 @@ const wee = function() {
   };
 
   //添加路由功能
-  app.use = function(url, cb) {
-    if (has(routers, 'url', url)) {
-      throw new Error('set the same router');
-    } else {
-      routers.push({
-        url: url,
-        callback: cb,
-      });
+  app.use = function() {
+    if (arguments.length == 1 && isArray(arguments[0])) {
+      try {
+        arguments[0].forEach(function(target) {
+          if (!has(routers, 'url', target.url)){
+            routers.push({
+              url: target.url,
+              callback: target.cb,
+            });
+          }
+        });
+      } catch (err) {
+        throw err;
+      }
+    }
+    else if(arguments.length ==2 && (isString(argument[0]) || isRegExp(argument[0]) ) && isFunction(argument[1]) ){
+      if (has(routers, 'url', url)) {
+        throw new Error('set the same router');
+      } else {
+        routers.push({
+          url: url,
+          callback: cb,
+        });
+      }
     }
   };
 
@@ -74,8 +92,6 @@ const wee = function() {
   app.staticnot = function(cb) {
     notFound = cb;
   };
-
-
 
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
