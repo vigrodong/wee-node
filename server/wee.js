@@ -32,13 +32,14 @@ const wee = function() {
         catch(function() {
           commonRouter(routers, req, res).then(function() {
 
-          }).catch(function() {
+          }).catch(function(err) {
             if (notFound && isFunction(notFound)) {
               notFound();
             }
             else {
               res.write('404,not fund or have no root');
               res.end();
+              console.log(err)
             }
           });
         });
@@ -60,7 +61,9 @@ const wee = function() {
         throw err;
       }
     }
-    else if(arguments.length ==2 && (isString(argument[0]) || isRegExp(argument[0]) ) && isFunction(argument[1]) ){
+    else if(arguments.length ==2 && (isString(arguments[0]) || isRegExp(arguments[0]) ) && isFunction(arguments[1]) ){
+      var url = arguments[0];
+      var cb = arguments[1];
       if (has(routers, 'url', url)) {
         throw new Error('set the same router');
       } else {
