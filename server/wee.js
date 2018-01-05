@@ -11,7 +11,6 @@ const isArray = isnot.isArray;
 const isString = isnot.isString;
 const isRegExp = isnot.isRegExp;
 
-
 const wee = function() {
   // 服务的路由设置
   var routers = [];
@@ -24,39 +23,49 @@ const wee = function() {
   //路由错误的回掉函数
   var notFound = null;
 
-  var lifecycle = [];
+  var before = null;
 
   const app = function(req, res) {
     var req = req;
     var res = res;
     // 对返回的res添加两个方法，一个直接发送字符串，一个直接发送json数据
-    res.send = function(str){
+    res.send = function(str) {
       this.write(str);
       this.end();
-    }
-    res.json = function(obj){
+    };
+    res.json = function(obj) {
       this.write(JSON.stringify(obj));
       this.end();
+    };
+
+    if (before && isFunction(before)) {
+      before(req, res, go);
+    }
+    else {
+      go();
     }
 
-    static(staticdir, req, res).
-        then(
-            function() {
-            }).
-        catch(function() {
-          commonRouter(routers, req, res).then(function() {
+    function go() {
+      static(staticdir, req, res).
+          then(
+              function() {
+              }).
+          catch(function() {
+            commonRouter(routers, req, res).then(function() {
 
-          }).catch(function(err) {
-            if (notFound && isFunction(notFound)) {
-              notFound(err);
-            }
-            else {
-              res.write('404,not fund or have no root');
-              res.end();
-              console.log(err)
-            }
+            }).catch(function(err) {
+              if (notFound && isFunction(notFound)) {
+                notFound(err);
+              }
+              else {
+                res.write('404,not fund or have no root');
+                res.end();
+                console.log(err);
+              }
+            });
           });
-        });
+    }
+
   };
 
   //添加路由功能
@@ -64,7 +73,7 @@ const wee = function() {
     if (arguments.length == 1 && isArray(arguments[0])) {
       try {
         arguments[0].forEach(function(target) {
-          if (!has(routers, 'url', target.url)){
+          if (!has(routers, 'url', target.url)) {
             routers.push({
               url: target.url,
               callback: target.cb,
@@ -75,7 +84,8 @@ const wee = function() {
         throw err;
       }
     }
-    else if(arguments.length ==2 && (isString(arguments[0]) || isRegExp(arguments[0]) ) && isFunction(arguments[1]) ){
+    else if (arguments.length == 2 && (isString(arguments[0]) || isRegExp(arguments[0]) ) &&
+        isFunction(arguments[1])) {
       var url = arguments[0];
       var cb = arguments[1];
       if (has(routers, 'url', url)) {
@@ -110,6 +120,10 @@ const wee = function() {
     notFound = cb;
   };
 
+  //引入生命周期before
+  app.before = function(cb) {
+    before = cb;
+  };
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
     var port = port || 80;
