@@ -27,6 +27,17 @@ const wee = function() {
   var lifecycle = [];
 
   const app = function(req, res) {
+    var req = req;
+    var res = res;
+    // 对返回的res添加两个方法，一个直接发送字符串，一个直接发送json数据
+    res.send = function(str){
+      this.write(str);
+      this.end();
+    }
+    res.json = function(obj){
+      this.write(JSON.stringify(obj));
+      this.end();
+    }
 
     static(staticdir, req, res).
         then(
@@ -114,7 +125,6 @@ const wee = function() {
         return false;
     }
   };
-
   return app;
 };
 module.exports = wee;
