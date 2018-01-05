@@ -2,12 +2,15 @@ const http = require('http');
 const https = require('https');
 const static = require('./static.js');
 const commonRouter = require('./commonRouter.js');
-const isFunction = require('./isnot.js').isFunction;
-const isArray = require('./isnot.js').isArray;
-const isString = require('./isnot.js').isString;
-const isRegExp = require('./isnot.js').isRegExp;
+const isnot = require('./isnot.js');
 const has = require('./wutil.js').has;
 const fs = require('fs');
+
+const isFunction = isnot.isFunction;
+const isArray = isnot.isArray;
+const isString = isnot.isString;
+const isRegExp = isnot.isRegExp;
+
 
 const wee = function() {
   // 服务的路由设置
@@ -98,8 +101,8 @@ const wee = function() {
 
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
-    var port = port ? port : 80;
-    var protocol = protocol ? protocol : 'http';
+    var port = port || 80;
+    var protocol = protocol || 'http';
     switch (protocol) {
       case 'http':
         http.createServer(app).listen(port);
