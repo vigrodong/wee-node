@@ -48,7 +48,7 @@ const wee = function() {
 
           }).catch(function(err) {
             if (notFound && isFunction(notFound)) {
-              notFound();
+              notFound(err);
             }
             else {
               res.write('404,not fund or have no root');
