@@ -14,7 +14,7 @@
 
 ##api
 
-#### app.use(router,callback)
+#### app.use(router,callback,callback)
 
 
 #### app.static(realDictory,renamedictory)
@@ -27,4 +27,7 @@
 
 
 #### app.chdir(dictory)
+
+
+#### app.before(callback)
 
