@@ -4,7 +4,6 @@ const static = require('./static.js');
 const commonRouter = require('./commonRouter.js');
 const isnot = require('./isnot.js');
 const has = require('./wutil.js').has;
-const fs = require('fs');
 
 const isFunction = isnot.isFunction;
 const isArray = isnot.isArray;
@@ -77,6 +76,7 @@ const wee = function() {
             routers.push({
               url: target.url,
               callback: target.cb,
+              before: target.before,
             });
           }
         });
@@ -84,18 +84,23 @@ const wee = function() {
         throw err;
       }
     }
-    else if (arguments.length == 2 && (isString(arguments[0]) || isRegExp(arguments[0]) ) &&
+    else if (arguments.length >= 2 && (isString(arguments[0]) || isRegExp(arguments[0]) ) &&
         isFunction(arguments[1])) {
       var url = arguments[0];
       var cb = arguments[1];
+      var before = isFunction(arguments[2]) ? arguments[2] : undefined;
       if (has(routers, 'url', url)) {
         throw new Error('set the same router');
       } else {
         routers.push({
           url: url,
           callback: cb,
+          before: before,
         });
       }
+    }
+    else {
+      throw new Error('it`s not a right router');
     }
   };
 

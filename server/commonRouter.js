@@ -1,21 +1,31 @@
 /**
  * Created by vigro on 2018/1/2.
  */
-const isRegExp = require('./isnot.js').isRegExp;
-const isString = require('./isnot.js').isString;
+const isnot = require('./isnot.js');
+const isRegExp = isnot.isRegExp;
+const isString = isnot.isString;
+const isFunction = isnot.isFunction;
 
 var processControl = 0;
 function commonRouter(routers, req, res) {
+
+  var router = null;
   return new Promise(function(resolve, reject) {
+    function go() {
+      router.callback(req, res);
+      resolve();
+    }
+
     if (routers.length != 0) {
       processControl = 0;
       routers.some(function(target) {
-        if (isRegExp(target.url) && target.url.test(req.url)) {
-          target.callback(req, res);
-          resolve();
-          return true;
-        } else if (isString(target.url) && req.url == target.url) {
-          target.callback(req, res);
+        if (isRegExp(target.url) && target.url.test(req.url) ||
+            isString(target.url) && req.url == target.url
+        ) {
+          if (target.before && isFunction(target.before)) {
+            router = target;
+            target.before(req, res, go);
+          }
           resolve();
           return true;
         }
