@@ -22,9 +22,11 @@ function commonRouter(routers, req, res) {
         if (isRegExp(target.url) && target.url.test(req.url) ||
             isString(target.url) && req.url == target.url
         ) {
+          router = target;
           if (target.before && isFunction(target.before)) {
-            router = target;
             target.before(req, res, go);
+          }else{
+            go();
           }
           resolve();
           return true;
