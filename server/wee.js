@@ -24,10 +24,13 @@ const wee = function() {
 
   var before = null;
 
+  var Engine = null;
+
   const app = function(req, res) {
     var req = req;
     var res = res;
     // 对返回的res添加两个方法，一个直接发送字符串，一个直接发送json数据
+    if(!isFunction(res.send) || !isFunction(res.json)){
     res.send = function(str) {
       this.write(str);
       this.end();
@@ -36,7 +39,10 @@ const wee = function() {
       this.write(JSON.stringify(obj));
       this.end();
     };
-
+    }
+    if(isFunction(Engine) && !isFunction(res.render)){
+      res.render = Engine;
+    }
     if (before && isFunction(before)) {
       before(req, res, go);
     }
@@ -122,12 +128,25 @@ const wee = function() {
   };
   //静态文件不存在的处理方案
   app.staticnot = function(cb) {
+    if (!isFunction(cb)) {
+      throw new Error('callback is  not a function');
+    }
     notFound = cb;
   };
 
   //引入生命周期before
   app.before = function(cb) {
+    if (!isFunction(cb)) {
+      throw new Error('callback is  not a function');
+    }
     before = cb;
+  };
+
+  app.engine = function(engine) {
+    Engine = engine || 'laytpl';
+    if (!isFunction(Engine)) {
+      throw new Error('you set the error engine');
+    }
   };
   //此功能可直接调开启服务器。
   app.listen = function(port, protocol) {
