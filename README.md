@@ -1,18 +1,18 @@
 # nodeweb
 ## a simple node web library
 
-###how to use 
+### how to use 
 
-####first
+#### first
 > npm i wee-node --save -dev
 
-####second
+#### second
 
 > const wee = require('wee-node') 
 
 > const app = wee()
 
-##api
+## api
 
 #### app.use(router,callback,callback)
 
