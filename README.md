@@ -8,33 +8,36 @@
 
 #### second
 
-> const wee = require('wee-node') 
-
-> const app = wee()
+>       server.js
+        const wee = require('wee-node') 
+        const app = wee()
+        app.use('/',function(res,req){
+            res.send('hello,world');
+        })
 
 ## api
 
 #### app.use(router,callback,callback)
-
-> app.use('/',function(res,req){  
-
->      res.write('hello!');  
->      res.end();
-
-> })
+>       exzample server.js
+        app.use('/',function(res,req){  
+            res.write('hello!');  
+            res.end();
+        })
 
 或者   
->app.use('/',function(res,req){    
-
->      res.write('hello!');  
->      res.end();
-> },  
->  function(res,req,next){     
- 
->       //进入路由的生命周期，before  
->       console.log('hello')   
->       next();
->})
+>
+        app.use('/',function(res,req){    
+                res.write('hello!');  
+                res.end();
+            },  
+        function(res,req,next){     
+            //进入路由的生命周期，before  
+            console.log('hello')   
+            next();
+        })
+>       res被添加两个静态方法
+        res.send => res.write + res.end
+        res.json => 发送json格式的字符串
 #### app.static(realDictory,renamedictory)
 
 > app.static('./static');  
@@ -45,7 +48,30 @@
 
 >       localhost:8080/img/one.png
 
+#### app.engine(engine)
+>       exzample server.js
+       const laytpl = require('laytpl').__express;
+       app.engine(laytpl);
+       var options = {name:'hello,wee'}
+       app.use('/',function(req,res){
+            res.render('./index.html',options,function(err,str){
+            res.send(str)     
+       })
+       })
 
+>       index.html
+        <html>
+        <head>
+            <title></title>
+        </head>
+        <body>
+        {{d.name}}
+        
+        </body>
+        </html>     
+        
+>       result
+        hello,wee
 
 #### app.staticnot(callback)
 
@@ -61,11 +87,10 @@
 
 #### app.before(callback)
 
-> app.before(function(req,res,next){  
+>       exzample server.js
+        app.before(function(req,res,next){  
+            req.send('hello');
+            next();
+        })  
 
->       req.send('hello');
->       next();
-
->})  
-
-在所有请求到来后首先触发这个 ，需要用next去继续下面的路由行为
+在所有请求到来后首先触发这个，需要用next去继续下面的路由行为
