@@ -94,3 +94,49 @@
         })  
 
 在所有请求到来后首先触发这个，需要用next去继续下面的路由行为
+
+## tool
+### wee-file-parse
+
+#### use
+
+> 
+        const app = require('wee-node')();
+        const file = require('wee-file-parse');
+        const fs = require('fs');
+        
+        app.use('upload',function(req,res){
+            var chunks = [];
+            req.on('data',function(chunk){
+                chunks.push(chunk);
+            });
+            req.on('end',function(){
+                var data = file(chunks);
+                fs.writeFile('/'+data.filename,data,(err)=>{
+                    if(err){
+                        throw err;
+                    }
+                    console.log('The file has been saved!');
+                })
+            })
+        })
+
+当将收集到上传的chunks传入到解析tool里面，会返回一个对象，该对象有两个属性，一个是上传的文件的body，一个是上传的文件的name
+>
+        data.file
+        data.filename
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
