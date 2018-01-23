@@ -2,7 +2,7 @@
  * Created by vigro on 2018/1/3.
  */
 const isObject = require('./isnot.js').isObject;
-var wuntil = {};
+var util = {};
 var processControl;//判断受否有属性值
 
 const has = function(array, prop, value) {
@@ -22,8 +22,13 @@ const extend = function(sup, sub) {
     sup[prop] = sub[prop];
   }
 };
+const query = function(regexp){
+  return function(string){
+    return string.match(regexp);
+  }
+}
+util.has = has;
+util.extend = has;
 
-wuntil.has = has;
-wuntil.extend = has;
 
-module.exports = wuntil;
+module.exports = util;

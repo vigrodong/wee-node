@@ -4,6 +4,7 @@ const static = require('./static.js');
 const commonRouter = require('./commonRouter.js');
 const isnot = require('./isnot.js');
 const has = require('./wutil.js').has;
+const reqExt = require('./reqExt.js')
 
 const isFunction = isnot.isFunction;
 const isArray = isnot.isArray;
@@ -29,20 +30,10 @@ const wee = function() {
   const app = function(req, res) {
     var req = req;
     var res = res;
-    // 对返回的res添加两个方法，一个直接发送字符串，一个直接发送json数据
-    if(!isFunction(res.send) || !isFunction(res.json)){
-    res.send = function(str) {
-      this.write(str);
-      this.end();
-    };
-    res.json = function(obj) {
-      this.write(JSON.stringify(obj));
-      this.end();
-    };
-    }
-    if(isFunction(Engine) && !isFunction(res.render)){
-      res.render = Engine;
-    }
+
+    //对req，res进行拓展
+    reqExt(req,res,Engine);
+
     if (before && isFunction(before)) {
       before(req, res, go);
     }
