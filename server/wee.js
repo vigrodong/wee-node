@@ -29,7 +29,7 @@ const wee = function() {
 
   const app = function(req, res) {
     //对req，res进行拓展
-    reqExt(req,res,Engine);
+    reqExt(req, res, Engine);
 
     if (before && isFunction(before)) {
       before(req, res, go);
@@ -44,18 +44,19 @@ const wee = function() {
               function() {
               }).
           catch(function() {
-            commonRouter(routers, req, res).then(function() {
-
-            }).catch(function(err) {
-              if (notFound && isFunction(notFound)) {
-                notFound(err);
-              }
-              else {
-                res.write('404,not fund or have no root');
-                res.end();
-                console.log(err);
-              }
-            });
+            commonRouter(routers, req, res).
+                then(function() {
+                }).
+                catch(function(err) {
+                  if (notFound && isFunction(notFound)) {
+                    notFound(err);
+                  }
+                  else {
+                    res.write('404,not fund or have no root');
+                    res.end();
+                    console.log(err);
+                  }
+                });
           });
     }
 
