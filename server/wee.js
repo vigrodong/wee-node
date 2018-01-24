@@ -28,9 +28,6 @@ const wee = function() {
   var Engine = null;
 
   const app = function(req, res) {
-    var req = req;
-    var res = res;
-
     //对req，res进行拓展
     reqExt(req,res,Engine);
 
