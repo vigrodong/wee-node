@@ -4,16 +4,17 @@
 ### how to use 
 
 #### first
-> npm i wee-node --save -dev
+> npm i wee-node --save-dev
 
 #### second
 
 >       server.js
         const wee = require('wee-node') 
         const app = wee()
-        app.use('/',function(res,req){
+        app.use('/',function(req,res){
             res.send('hello,world');
-        })
+        });
+        app.listen(8080)
 
 ## api
 
@@ -35,9 +36,14 @@
             console.log('hello')   
             next();
         })
->       res被添加两个静态方法
+>       
+        res被添加两个静态方法
         res.send => res.write + res.end
         res.json => 发送json格式的字符串
+        req被添加两个静态属性
+        req.query=> ?demo=0    ==>  {demo:0}
+        req.post=> post的body体。
+
 #### app.static(realDictory,renamedictory)
 
 > app.static('./static');  
