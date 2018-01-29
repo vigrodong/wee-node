@@ -2,9 +2,12 @@
  * Created by vigro on 2018/1/2.
  */
 const isnot = require('./isnot.js');
-const isRegExp = isnot.isRegExp;
-const isString = isnot.isString;
-const isFunction = isnot.isFunction;
+// const isRegExp = isnot.isRegExp;
+// const isString = isnot.isString;
+// const isFunction = isnot.isFunction;
+const isRegExp = isnot('[Object RegExp]');
+const isString = isnot('[Object String]');
+const isFunction = isnot('[Object Function]');
 
 var processControl = 0;
 function commonRouter(routers, req, res) {

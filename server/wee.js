@@ -6,10 +6,14 @@ const isnot = require('./isnot.js');
 const has = require('./wutil.js').has;
 const reqExt = require('./reqExt.js')
 
-const isFunction = isnot.isFunction;
-const isArray = isnot.isArray;
-const isString = isnot.isString;
-const isRegExp = isnot.isRegExp;
+// const isFunction = isnot.isFunction;
+// const isArray = isnot.isArray;
+// const isString = isnot.isString;
+// const isRegExp = isnot.isRegExp;
+const isFunction = isnot('[object Function]');
+const isArray = isnot('[object Array]');
+const isString = isnot('[object String]');
+const isRegExp = isnot('[object RegExp]');
 
 const wee = function() {
   // 服务的路由设置

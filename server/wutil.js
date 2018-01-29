@@ -1,7 +1,7 @@
 /**
  * Created by vigro on 2018/1/3.
  */
-const isObject = require('./isnot.js').isObject;
+const isObject = require('./isnot.js')('[Object Object]');
 var util = {};
 var processControl;//判断受否有属性值
 

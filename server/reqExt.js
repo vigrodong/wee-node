@@ -2,7 +2,7 @@
  * Created by vigro on 2018/1/23.
  */
 const url = require('url');
-const isFunction = require('./isnot.js').isFunction;
+const isFunction = require('./isnot.js')('[Object Function]');
 
 function reqExt(req, res, Engine) {
   // extend req
